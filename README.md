@@ -40,6 +40,7 @@ Here is a complete, working example to login and start listening for messages:
 import asyncio
 from tweakio_whatsapp import BrowserManager, WhatsappLogin, MessageLoader, ChatLoader
 
+
 async def main():
     # 1️⃣ Initialize Browser with Anti-Detect capabilities
     browser_manager = BrowserManager(headless=False)
@@ -58,12 +59,13 @@ async def main():
     # 4️⃣ Iterate through chats and fetch messages
     async for chat, name in chat_loader.ChatRoller(cycle=1, MaxChat=3):
         print(f"📂 Checking Chat: {name}")
-        
+
         async for msg, text, success, data in loader.LiveMessages(
-            chat_id=chat, 
-            cycle=3  # Check for 3 cycles of live updates
+                chat=chat,
+                cycle=3  # Check for 3 cycles of live updates
         ):
             print(f"   📩 New Message: {text}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
