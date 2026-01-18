@@ -1,6 +1,7 @@
 """
-Chat Class for the whatsapp module
+Chat Class for the WhatsApp module
 """
+from __future__ import annotations
 import random
 import time
 from dataclasses import dataclass, field
@@ -64,11 +65,11 @@ class ChatLoader:
         self.page = page
 
     @staticmethod
-    async def _getWrappedChat(Max: int, page: Page) -> List["Chat"]:
+    async def _getWrappedChat(Max: int, page: Page) -> List[Chat]:
         """Wraps the chats and return the list to fetcher"""
         try:
             chats = sc.chat_items(page)
-            wrapped: List["Chat"] = []
+            wrapped: List[Chat] = []
             retry = 0
             while not (await chats.count()) and retry < 3:
                 chats = sc.chat_items(page)
@@ -89,6 +90,7 @@ class ChatLoader:
             return wrapped
         except Exception as e:
             logger.error(f"[ChatLoader -> _getWrappedChat] Error: {e}", exc_info=True)
+            return []
 
     async def Fetcher(self, MaxChat: int = 5):
         """
@@ -114,9 +116,6 @@ class ChatLoader:
         :param chat:
         :return:
         """
-        chat_handle: ElementHandle = await chat.ChatUI.element_handle(timeout=1000) \
-            if isinstance(chat.ChatUI, Locator) else chat.ChatUI
-
         i = await _is_Unread(chat=chat)
         if i == 1:
             return True

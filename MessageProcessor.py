@@ -14,7 +14,7 @@ import directory as dirs
 import selector_config as sc
 from Errors import MessageNotFound
 from Shared_Resources import logger
-
+from Storage import Storage
 
 @dataclass
 class ChatState:
@@ -136,8 +136,7 @@ class MessageProcessor:
         self.ChatState: Dict[str, "ChatState"] = {}
         self.DeferQueue: Queue["BindChat"] = Queue()
 
-        # Persistent storage (SQLite)
-        from Storage import Storage
+        # Persistent storage
         self.storage = Storage()
 
     async def _wrappedMessageList(
