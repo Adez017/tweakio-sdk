@@ -3,7 +3,7 @@ import random
 import pyperclip
 from playwright.async_api import Page, ElementHandle
 
-from Shared_Resources import logger
+from Custom_logger import logger
 
 
 async def human_send(page: Page, element: ElementHandle, text: str):

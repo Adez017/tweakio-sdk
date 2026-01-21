@@ -14,7 +14,7 @@ from camoufox.async_api import launch_options, AsyncCamoufox
 from playwright.async_api import BrowserContext, Page
 
 import directory as dirs
-from Shared_Resources import logger
+from Custom_logger import logger
 
 
 class BrowserManager:

@@ -18,8 +18,7 @@ class message_interface(ABC):
     MessageUI: Optional[Union[ElementHandle, Locator]]
     MessageID: Optional[str]
 
-    @staticmethod
     @abstractmethod
-    def _message_key(*args, **kwargs) -> str:
-        """Returns the unique key of the message object"""
+    def _message_key(self) -> str:
+        """Returns the Hashed UI"""
         pass

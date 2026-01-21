@@ -1,5 +1,5 @@
 """
-Util Doc for tweakio-whatsapp library
+Util Doc for tweakio-sdk library
 Todo Convert to a Fully Utils class ---------------------------------------------------------
 """
 import asyncio
@@ -8,8 +8,8 @@ from typing import Union
 
 from playwright.async_api import Page, ElementHandle, Locator
 
-import selector_config as sc
-from Shared_Resources import logger
+from src.WhatsApp import selector_config as sc
+from Custom_logger import logger
 
 
 # ----------------------

@@ -8,10 +8,10 @@ from typing import Dict, List, Optional
 
 from playwright.async_api import Page, ElementHandle, Locator
 
-import selector_config as sc
-from RepositoryPattern.Interfaces.Chat_processor_Interface import chat_processor_interface
-from RepositoryPattern.WhatsApp.DefinedClasses.Chat import whatsapp_chat
-from Shared_Resources import logger
+from src.WhatsApp import selector_config as sc
+from src.Interfaces.Chat_processor_Interface import chat_processor_interface
+from src.WhatsApp.DefinedClasses.Chat import whatsapp_chat
+from Custom_logger import logger
 
 
 # Todo , add the paths for chatLoaderInterface , ChatInterface

@@ -11,10 +11,10 @@ from playwright.async_api import Page, Locator, ElementHandle
 
 import Extra as ex
 import directory as dirs
-import selector_config as sc
+from src.WhatsApp import selector_config as sc
 from Errors import MessageNotFound
-from Shared_Resources import logger
-from storage import storage
+from Custom_logger import logger
+from sql_lite_storage import SQL_Lite_Storage
 
 @dataclass
 class ChatState:
@@ -38,7 +38,7 @@ class BindChat:
     """
     Pack for per-chat filtered message batch
     """
-    chat: Union["Locator", "ElementHandle"]
+    chat: Union[Locator, ElementHandle]
     messages: List[Message]
     seen_at: float
 
@@ -48,16 +48,16 @@ class Message:
     """
     Message wrapper for filtered parsing
     """
-    MessageUI: Union["Locator", "ElementHandle"]
+    MessageUI: Union[Locator, ElementHandle]
     data_id: Optional[str]
     Direction: Literal["in", "out"]
     System_Hit_Time: float = field(default_factory=time.time)
     Failed: Optional[bool] = False
     text: Optional[str] = None
-    ChatUI: Optional[Union["Locator", "ElementHandle"]] = None
+    ChatUI: Optional[Union[Locator, ElementHandle]] = None
 
     @staticmethod
-    def GetIncomingMessages(MsgList: List["Message"]) -> List["Message"]:
+    def GetIncomingMessages(MsgList: List[Message]) -> List[Message]:
         """Filter Incoming Messages"""
         Mlist: List[Message] = []
         for msg in MsgList:
@@ -66,7 +66,7 @@ class Message:
         return Mlist
 
     @staticmethod
-    def GetOutgoingMessages(MsgList: List["Message"]) -> List["Message"]:
+    def GetOutgoingMessages(MsgList: List[Message]) -> List[Message]:
         """Filter Outgoing Messages"""
         Mlist: List[Message] = []
         for msg in MsgList:
@@ -133,11 +133,11 @@ class MessageProcessor:
         self.WindowSeconds = WindowSeconds
 
         # Chat tracking
-        self.ChatState: Dict[str, "ChatState"] = {}
-        self.DeferQueue: Queue["BindChat"] = Queue()
+        self.ChatState: Dict[str, ChatState] = {}
+        self.DeferQueue: Queue[BindChat] = Queue()
 
         # Persistent storage
-        self.storage = storage()
+        self.storage = SQL_Lite_Storage()
 
     async def _wrappedMessageList(
             self,
@@ -180,7 +180,7 @@ class MessageProcessor:
 
     async def MessageFetcher(
             self,
-            chat: Union["Locator", "ElementHandle", "Chat"],
+            chat: Union[Locator, ElementHandle, Chat],
     ) -> List[Message]:
         """
         Fetch messages → trace → filter → return deliverable messages
@@ -204,9 +204,9 @@ class MessageProcessor:
 
     def Filter(
             self,
-            chat: Union["Locator", "ElementHandle", "Chat"],
-            messages: List["Message"],
-    ) -> List["Message"]:
+            chat: Union[Locator, ElementHandle, Chat],
+            messages: List[Message],
+    ) -> List[Message]:
         """
         Rate Limit the chat and give state based returning.
         States :
@@ -251,7 +251,7 @@ class MessageProcessor:
         return messages
 
     @staticmethod
-    def _chat_key(chat: Union["Locator", "ElementHandle", "Chat"]) -> str:
+    def _chat_key(chat: Union[Locator, ElementHandle, Chat]) -> str:
         """
         Stable identifier for chat in SDK runtime
         """

@@ -12,9 +12,9 @@ from playwright.async_api import Locator
 from playwright.async_api import Page
 
 import directory as dirs
-import selector_config as sc
+from src.WhatsApp import selector_config as sc
 from Errors import NumberNotFound, CountryNotFound, QRNotScanned, PageNotFound
-from Shared_Resources import logger
+from Custom_logger import logger
 
 
 class WhatsappLogin:

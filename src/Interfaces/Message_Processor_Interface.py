@@ -4,16 +4,24 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from RepositoryPattern.Interfaces.Chat_Interface import chat_interface
-from message_Interface import message_interface
-from storage import storage
+from src.Interfaces.Chat_Interface import chat_interface
+from src.MessageFilter import Filter
+from Message_Interface import message_interface
+from sql_lite_storage import SQL_Lite_Storage
 
 
 class message_processor_interface(ABC):
     """
     Message Processor Interface for Messages
     """
-    Storage: Optional[storage]
+
+    def __init__(
+            self,
+            storage_obj: Optional[SQL_Lite_Storage] = None,
+            filter_obj: Optional[Filter] = None
+    ) -> None:
+        self.storage = storage_obj
+        self.filter = filter_obj
 
     @abstractmethod
     async def _get_wrapped_Messages(self, retry: int, *args, **kwargs) -> List[message_interface]: pass
@@ -25,6 +33,3 @@ class message_processor_interface(ABC):
         Flexibility with batch processing & Safer Filtering approaches.
         """
         pass
-
-
-2

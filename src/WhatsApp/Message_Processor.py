@@ -1,44 +1,54 @@
+"""
+WhatsApp's Custom Message processor.
+It will have in Extra as incoming and outgoing Message filters ,
+
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from playwright.async_api import Page
 
-import selector_config as sc
-from RepositoryPattern.Decorators.Chat_Click_decorator import ensure_chat_clicked
-from RepositoryPattern.Interfaces.message_processor_interface import message_processor_interface
-from RepositoryPattern.WhatsApp.Chat_Processor import chat_processor
-from RepositoryPattern.WhatsApp.DefinedClasses.Chat import whatsapp_chat
-from RepositoryPattern.WhatsApp.DefinedClasses.Message import whatsapp_message
-from Shared_Resources import logger
-from storage import storage
-
+from src.WhatsApp import selector_config as sc
+from src.Decorators.Chat_Click_decorator import ensure_chat_clicked
+from src.Interfaces.Message_Processor_Interface import message_processor_interface
+from src.WhatsApp.Chat_Processor import chat_processor
+from src.WhatsApp.DefinedClasses.Chat import whatsapp_chat
+from src.WhatsApp.DefinedClasses.Message import whatsapp_message
+from Custom_logger import logger
+from sql_lite_storage import SQL_Lite_Storage
+from src.MessageFilter import Filter
 
 @dataclass
 class MessageProcessor(message_processor_interface):
 
-    def __init__(self, Storage: storage, chat_processor: chat_processor, page: Page) -> None:
-        self.Storage = Storage
+    def __init__(
+            self,
+            storage_obj: Optional[SQL_Lite_Storage],
+            filter_obj: Optional[Filter],
+            chat_processor: chat_processor,
+            page: Page,
+    ) -> None:
+        super().__init__(storage_obj, filter_obj)
         self.chat_processor = chat_processor
         self.page = page
 
     @staticmethod
-    async def sort_incoming_messages(msgList: List[whatsapp_message]) -> List[whatsapp_message]:
-        """Returns incoming messages sorted by direction"""
+    async def sort_messages(msgList: List[whatsapp_message], incoming : bool ) -> List[whatsapp_message]:
+        """
+        Returns incoming messages sorted by direction.
+        incoming : if true gives incoming messages , else false gives outgoing messages.
+        """
         if not msgList: raise Exception("Cant Sort incoming messages/ List is Empty/None")
-        return [msg for msg in msgList if msg.Direction == "in"]
-
-    @staticmethod
-    async def sort_outgoing_messages(msgList: List[whatsapp_message]) -> List[whatsapp_message]:
-        """Returns incoming messages sorted by direction"""
-        if not msgList: raise Exception("Cant Sort outgoing messages/ List is Empty/None")
+        if incoming :
+            return [msg for msg in msgList if msg.Direction == "in"]
         return [msg for msg in msgList if msg.Direction == "out"]
 
     @ensure_chat_clicked(lambda self, chat: self.chat_processor._click_chat(chat))
     async def _get_wrapped_Messages(self, chat: whatsapp_chat, retry: int = 3, *args, **kwargs) -> List[
         whatsapp_message]:
-        wrappedlist: List[whatsapp_message] = []
+        wrapped_list: List[whatsapp_message] = []
         try:
             all_Msgs = await sc.messages(page=self.page)
             count = await all_Msgs.count()
@@ -64,7 +74,7 @@ class MessageProcessor(message_processor_interface):
                     logger.error("Data ID in WA / get wrapped Messages , None/Empty. Skipping")
                     continue
 
-                wrappedlist.append(
+                wrapped_list.append(
                     whatsapp_message(
                         MessageUI=msg,
                         Direction="in" if await msg.locator(".message-in").count() > 0 else "out",
@@ -76,13 +86,21 @@ class MessageProcessor(message_processor_interface):
                 )
         except Exception as e:
             logger.error(f"WA / [MessageProcessor] {e}", exc_info=True)
-        return wrappedlist
+        return wrapped_list
 
-    async def Fetcher(self, chat: whatsapp_chat, retry : int , *args, **kwargs) -> List[whatsapp_message]:
-        msgList : List[whatsapp_message] = await self._get_wrapped_Messages(chat, *args, **kwargs)
-        try :
-            # Todo , Fix the Storage Enqueue to take the Interface based Serialized Object and add in DB
-            await self.Storage.enqueue_insert(msgList)
+    async def Fetcher(self, chat: whatsapp_chat, retry: int, *args, **kwargs) -> List[whatsapp_message]:
+        msgList = await self._get_wrapped_Messages(chat, retry, *args, **kwargs)
+
+        try:
+            if self.storage:
+                await self.storage.enqueue_insert(msgList)
+
+            if self.filter:
+                msgList =self.filter.apply(msgList)
+
+            return msgList
+
         except Exception as e:
             logger.error(f"WA / [MessageProcessor] / Fetcher {e}", exc_info=True)
-        return msgList
+            return msgList
+

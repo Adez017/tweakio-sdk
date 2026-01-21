@@ -6,7 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from RepositoryPattern.Interfaces.Chat_Interface import chat_interface
+from src.Interfaces.Chat_Interface import chat_interface
 
 
 @dataclass
@@ -19,9 +19,7 @@ class whatsapp_chat(chat_interface):
     System_Hit_Time: float = field(default_factory=time.time)
 
     def __post_init__(self):
-        self.chatID = self._chat_key(self)
+        self.chatID = self._chat_key()
 
-    @staticmethod
-    def _chat_key(chat: whatsapp_chat) -> str:
-        return str(id(chat))
-
+    def _chat_key(self) -> str:
+        return f"wa::{self.chatName.lower().strip()}"

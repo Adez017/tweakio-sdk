@@ -18,8 +18,7 @@ class chat_interface(ABC):
     ChatUI: Optional[Union[ElementHandle, Locator]]
     System_Hit_Time: float
 
-    @staticmethod
     @abstractmethod
-    async def _chat_key(*args, **kwargs) -> str:
-        """Returns the Unique key of the chat Object"""
+    def _chat_key(self) -> str:
+        """Returns the Hashed UI"""
         pass

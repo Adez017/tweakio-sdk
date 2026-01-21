@@ -9,9 +9,9 @@ from typing import Union, Optional, List
 
 from playwright.async_api import Page, Locator, ElementHandle
 
-import selector_config as sc
+from src.WhatsApp import selector_config as sc
 from Errors import ChatsNotFound
-from Shared_Resources import logger
+from Custom_logger import logger
 
 
 @dataclass

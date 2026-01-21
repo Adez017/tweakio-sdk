@@ -1,7 +1,7 @@
 import asyncio
 import functools
 
-from Shared_Resources import logger
+from Custom_logger import logger
 
 
 def ensure_chat_clicked(chat_click_fn, retries=3, delay=0.5):

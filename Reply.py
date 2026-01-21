@@ -5,8 +5,8 @@ from playwright.async_api import Page, ElementHandle, Locator
 
 import _Humanize as ha
 import _Media as med
-import selector_config as sc
-from Shared_Resources import logger
+from src.WhatsApp import selector_config as sc
+from Custom_logger import logger
 
 
 async def double_edge_click(page: Page, message: Union[ElementHandle, Locator]) -> bool:

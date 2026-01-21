@@ -5,8 +5,8 @@ from pathlib import Path
 
 from playwright.async_api import Page, Locator, FileChooser
 
-import selector_config as sc
-from Shared_Resources import logger
+from src.WhatsApp import selector_config as sc
+from Custom_logger import logger
 
 
 # ----------------------------------------------------------------  #
