@@ -8,14 +8,31 @@
 
 ---
 
-## 🎯 Vision
+## 🔴 The Problem
 
-Tweakio-SDK isn't just a WhatsApp bot—it's a **multi-platform communication automation framework** designed with production-grade architecture patterns.
+Modern communication automation faces three critical challenges:
+
+1. **Platform Lock-In**: Most automation tools are tightly coupled to a single platform. Want WhatsApp AND Telegram? You need two completely different codebases.
+
+2. **Detection & Bans**: Standard automation libraries (Selenium, basic Playwright) are easily fingerprinted. Platforms detect and ban accounts within hours.
+
+3. **Fragile Scripts**: When WhatsApp updates its UI, automation scripts break. Teams waste weeks patching selectors instead of building features.
+
+**The industry treats automation as throwaway scripts, not production software.**
+
+---
+
+## 💡 The Solution
+
+**Tweakio-SDK** is a **multi-platform communication automation framework** built with production-grade architecture patterns.
+
+### Core Principles:
+- **Platform-Agnostic Core**: WhatsApp lives in `src/WhatsApp/`. Telegram, Instagram, and custom platforms plug into the same infrastructure.
+- **Stealth-First**: Camoufox + BrowserForge ensure your automation is indistinguishable from human behavior.
+- **Interface-Driven**: Platform modules implement strict contracts. When WhatsApp breaks, only `src/WhatsApp/` needs updates—the Core stays stable.
 
 **Current**: WhatsApp Web automation (v0.1.4)  
-**Future**: Telegram, Instagram, Discord, and custom platforms—all sharing the same Core.
-
-Whether you're building intelligent chatbots, automated alert systems, or multi-account management tools, Tweakio provides the **platform-agnostic foundation** you need.
+**Roadmap**: Telegram (Q2 2026), Instagram (Q3 2026), Custom Platforms (Q4 2026)
 
 ---
 
