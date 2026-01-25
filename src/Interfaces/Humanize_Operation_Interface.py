@@ -11,6 +11,6 @@ class humanize_operation(ABC):
         self.page = page
 
     @abstractmethod
-    async def operation_typing(self, text: str) -> None:
+    async def typing(self, text: str, **kwargs) -> None:
         """This operation ensures the given text is typed on the Web UI with humanized Typing"""
         pass
