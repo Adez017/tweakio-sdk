@@ -1,29 +1,80 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tweakio-SDK"
-version = "0.1.4"
-description = "High-performance, anti-detection WhatsApp automation SDK. Features async SQLite storage, rate limiting, and human-like interaction loops."
+name = "tweakio-sdk"
+version = "0.1.5"
+description = "Production-grade WhatsApp automation SDK with interface-driven architecture"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-  {name = "Rohit"}
+    {name = "BITS-Rohit"}
 ]
+keywords = ["whatsapp", "automation", "playwright", "selenium", "web-scraping"]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Communications :: Chat",
 ]
+
+# PRODUCTION DEPENDENCIES ONLY (users get these)
 dependencies = [
     "playwright>=1.40.0",
-    "camoufox>=0.3.5",
-    "browserforge>=1.0.0",
-    "platformdirs>=4.0.0",
-    "colorlog>=6.0.0"
+    "camoufox>=0.3.0",
+    "pyperclip>=1.8.2",
+]
+
+[project.optional-dependencies]
+# DEVELOPMENT DEPENDENCIES (install with: pip install -e ".[dev]")
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.0",
+    "black>=23.0.0",
+    "mypy>=1.5.0",
+    "ruff>=0.0.290",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/Start-Tweakio/Tweakio-SDK"  # Assumed based on project name
-"Bug Tracker" = "https://github.com/Start-Tweakio/Tweakio-SDK/issues"
+Homepage = "https://github.com/BITS-Rohit/tweakio-sdk"
+Repository = "https://github.com/BITS-Rohit/tweakio-sdk"
+Issues = "https://github.com/BITS-Rohit/tweakio-sdk/issues"
+
+# Setuptools configuration
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+addopts = ["-v", "--cov=src", "--cov-report=term-missing"]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*"]
+
+# Black formatter configuration
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+# Mypy type checker configuration
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true

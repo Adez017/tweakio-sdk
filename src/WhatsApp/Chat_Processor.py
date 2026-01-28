@@ -58,7 +58,7 @@ class chat_processor(chat_processor_interface):
             for i in range(minimum):
                 wrapperChat = whatsapp_chat(
                     chatUI=chats.nth(i),
-                    chatName=await sc.getChatName(chats.nth(i))
+                    chatName= await sc.getChatName(chats.nth(i))
                 )
                 wrapped.append(wrapperChat)
 
@@ -72,11 +72,16 @@ class chat_processor(chat_processor_interface):
     async def _click_chat(self, chat: Optional[whatsapp_chat]) -> bool:
         """Chat Clicker to open."""
         try:
+            #---------------------
+            # Todo , add check if chat is None
+            #---------------------
+
             handle: Optional[ElementHandle] = await chat.chatUI.element_handle(timeout=1500) \
                 if isinstance(chat.chatUI, Locator) \
                 else chat.chatUI if chat.chatUI is not None else None
             # Todo Use ErrorTrack Class
-            if handle is None: raise ChatClickError("Chat Object is Given None in WhatsApp chat loader / _click_chat")
+            if handle is None: 
+                raise ChatClickError("Chat Object is Given None in WhatsApp chat loader / _click_chat")
 
             await handle.click(timeout=3500)
             return True

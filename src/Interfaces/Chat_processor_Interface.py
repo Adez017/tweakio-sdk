@@ -11,10 +11,9 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
-import ChatInterface
 from playwright.async_api import Page
 
-from Chat_Interface import chat_interface
+from src.Interfaces.Chat_Interface import chat_interface
 
 
 class chat_processor_interface(ABC):
