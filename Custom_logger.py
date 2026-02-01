@@ -2,7 +2,6 @@
 Shared Resources Module for tweakio-sdk library
 """
 import logging
-import threading
 from logging.handlers import RotatingFileHandler
 
 from colorlog import ColoredFormatter

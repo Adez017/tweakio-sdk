@@ -5,14 +5,31 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tweakio-sdk"
 version = "0.1.5"
-description = "Production-grade WhatsApp automation SDK with interface-driven architecture"
+description = "Tweakio-SDK: WhatsApp automation Python library with anti-detection, async storage, and production-grade architecture"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "BITS-Rohit"}
+    {name = "BITS-Rohit", email = "rohit@tweakio.dev"}
 ]
-keywords = ["whatsapp", "automation", "playwright", "selenium", "web-scraping"]
+maintainers = [
+    {name = "BITS-Rohit", email = "rohit@tweakio.dev"}
+]
+keywords = [
+    "tweakio",
+    "tweakio-sdk",
+    "whatsapp",
+    "whatsapp-automation",
+    "whatsapp-bot",
+    "automation",
+    "playwright",
+    "web-automation",
+    "browser-automation",
+    "chatbot",
+    "messaging",
+    "anti-detection",
+    "camoufox"
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -47,7 +64,9 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/BITS-Rohit/tweakio-sdk"
 Repository = "https://github.com/BITS-Rohit/tweakio-sdk"
+Documentation = "https://github.com/BITS-Rohit/tweakio-sdk#readme"
 Issues = "https://github.com/BITS-Rohit/tweakio-sdk/issues"
+Changelog = "https://github.com/BITS-Rohit/tweakio-sdk/releases"
 
 # Setuptools configuration
 [tool.setuptools]
