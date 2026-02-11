@@ -16,8 +16,15 @@ ProfileManager = module.ProfileManager
 pm = ProfileManager()
 
 print("Creating profiles...")
-pm.create_profile("whatsapp", "test1")
-pm.create_profile("whatsapp", "test2")
+try:
+    pm.create_profile("whatsapp", "test1")
+except ValueError:
+    pass
+
+try:
+    pm.create_profile("whatsapp", "test2")
+except ValueError:
+    pass
 
 print("Profiles:", pm.list_profiles("whatsapp"))
 

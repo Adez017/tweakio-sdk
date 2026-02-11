@@ -35,13 +35,19 @@ class ProfileManager:
             "created_at": now,
             "last_used": now,
             "paths": {
-                "profile_dir": str(self._get_profile_dir(platform, profile_id)),
-                "session_file": "session.json",
-                "fingerprint_file": "fingerprint.pkl",
-                "cookies_file": "cookies.json",
-                "cache_dir": "cache",
-                "backup_dir": "backups"
-            },
+                    "profile_dir": str(self._get_profile_dir(platform, profile_id)),
+                    "session_file": "session.json",
+                    "fingerprint_file": "fingerprint.pkl",
+                    "cookies_file": "cookies.json",
+                    "cache_dir": "cache",
+                    "backup_dir": "backups",
+                    "media_dir": "media",
+                    "media_images": "media/images",
+                    "media_videos": "media/videos",
+                    "media_voice": "media/voice",
+                    "media_documents": "media/documents"
+                },
+
             "backup": {
                 "enabled": True,
                 "max_backups": 10
@@ -63,6 +69,13 @@ class ProfileManager:
         profile_dir.mkdir(parents=True)
         (profile_dir / "cache").mkdir()
         (profile_dir / "backups").mkdir()
+
+ # Create media directories
+        media_dir = profile_dir / "media"
+        (media_dir / "images").mkdir(parents=True)
+        (media_dir / "videos").mkdir()
+        (media_dir / "voice").mkdir()
+        (media_dir / "documents").mkdir()       
 
         # Create empty session + cookies + fingerprint
         (profile_dir / "session.json").write_text("{}")
@@ -121,7 +134,7 @@ class ProfileManager:
 
         with open(metadata_file, "r") as f:
             metadata = json.load(f)
-            
+
         if metadata["status"]["is_active"]:
             return
 
