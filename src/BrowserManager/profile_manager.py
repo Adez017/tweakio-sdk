@@ -5,25 +5,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
-from platformdirs import user_data_dir
+
+from directory import DirectoryManager
+
 
 
 class ProfileManager:
     def __init__(self, app_name: str = "tweakio"):
         self.app_name = app_name
-        self.base_dir = Path(user_data_dir(app_name))
-        self.platforms_dir = self.base_dir / "platforms"
+        self.directory = DirectoryManager(app_name)
 
-        # Ensure base platforms directory exists
-        self.platforms_dir.mkdir(parents=True, exist_ok=True)
 
-    def _get_platform_dir(self, platform: str) -> Path:
-        platform_dir = self.platforms_dir / platform.lower()
-        platform_dir.mkdir(parents=True, exist_ok=True)
-        return platform_dir
     
-    def _get_profile_dir(self, platform: str, profile_id: str) -> Path:
-        return self._get_platform_dir(platform) / profile_id
     
     def _generate_metadata(self, platform: str, profile_id: str) -> dict:
         now = datetime.now().isoformat()
@@ -35,7 +28,8 @@ class ProfileManager:
             "created_at": now,
             "last_used": now,
             "paths": {
-                    "profile_dir": str(self._get_profile_dir(platform, profile_id)),
+                    "profile_dir": str(self.directory.get_profile_dir(platform, profile_id)),
+
                     "session_file": "session.json",
                     "fingerprint_file": "fingerprint.pkl",
                     "cookies_file": "cookies.json",
@@ -60,43 +54,44 @@ class ProfileManager:
         }
     
     def create_profile(self, platform: str, profile_id: str) -> None:
-        profile_dir = self._get_profile_dir(platform, profile_id)
+        profile_dir = self.directory.get_profile_dir(platform, profile_id)
 
         if profile_dir.exists():
-            raise ValueError(f"Profile '{profile_id}' already exists for platform '{platform}'")
+            raise ValueError(
+                f"Profile '{profile_id}' already exists for platform '{platform}'"
+            )
 
-        # Create directory structure
-        profile_dir.mkdir(parents=True)
-        (profile_dir / "cache").mkdir()
-        (profile_dir / "backups").mkdir()
+        # NOW create the directory
+        profile_dir.mkdir(parents=True, exist_ok=True)
 
- # Create media directories
-        media_dir = profile_dir / "media"
-        (media_dir / "images").mkdir(parents=True)
-        (media_dir / "videos").mkdir()
-        (media_dir / "voice").mkdir()
-        (media_dir / "documents").mkdir()       
+        self.directory.get_cache_dir(platform, profile_id)
+        self.directory.get_backup_dir(platform, profile_id)
+        self.directory.get_media_images_dir(platform, profile_id)
+        self.directory.get_media_videos_dir(platform, profile_id)
+        self.directory.get_media_voice_dir(platform, profile_id)
+        self.directory.get_media_documents_dir(platform, profile_id)
 
-        # Create empty session + cookies + fingerprint
         (profile_dir / "session.json").write_text("{}")
         (profile_dir / "cookies.json").write_text("{}")
         (profile_dir / "fingerprint.pkl").write_bytes(b"")
 
-        # Create metadata
         metadata = self._generate_metadata(platform, profile_id)
 
         with open(profile_dir / "metadata.json", "w") as f:
             json.dump(metadata, f, indent=4)
 
+
     def list_profiles(self, platform: Optional[str] = None) -> List[str]:
         results = []
 
         if platform:
-            platform_dir = self._get_platform_dir(platform)
+            platform_dir = self.directory.get_platform_dir(platform)
+
             if platform_dir.exists():
                 results = [p.name for p in platform_dir.iterdir() if p.is_dir()]
         else:
-            for plat in self.platforms_dir.iterdir():
+            for plat in self.directory.platforms_dir.iterdir():
+
                 if plat.is_dir():
                     for profile in plat.iterdir():
                         if profile.is_dir():
@@ -105,7 +100,8 @@ class ProfileManager:
         return results
     
     def _deactivate_current_profile(self, platform: str):
-        platform_dir = self._get_platform_dir(platform)
+        platform_dir = self.directory.get_platform_dir(platform)
+
 
         for profile in platform_dir.iterdir():
             metadata_file = profile / "metadata.json"
@@ -125,7 +121,8 @@ class ProfileManager:
                         json.dump(data, f, indent=4)
 
     def activate_profile(self, platform: str, profile_id: str) -> None:
-        profile_dir = self._get_profile_dir(platform, profile_id)
+        profile_dir = self.directory.get_profile_dir(platform, profile_id)
+
 
         if not profile_dir.exists():
             raise ValueError(f"Profile '{profile_id}' does not exist for platform '{platform}'")
@@ -158,7 +155,8 @@ class ProfileManager:
         
 
     def delete_profile(self, platform: str, profile_id: str, force: bool = False) -> None:
-        profile_dir = self._get_profile_dir(platform, profile_id)
+        profile_dir = self.directory.get_profile_dir(platform, profile_id)
+
 
         if not profile_dir.exists():
             raise ValueError(f"Profile '{profile_id}' does not exist for platform '{platform}'")
@@ -176,8 +174,11 @@ class ProfileManager:
 
         # Remove directory safely
         shutil.rmtree(profile_dir)
+
     def create_backup(self, platform: str, profile_id: str) -> None:
-        profile_dir = self._get_profile_dir(platform, profile_id)
+
+        profile_dir = self.directory.get_profile_dir(platform, profile_id)
+
 
         if not profile_dir.exists():
             raise ValueError("Profile does not exist.")
@@ -200,6 +201,7 @@ class ProfileManager:
         shutil.copy2(session_file, backup_file)
 
         self._prune_backups(profile_dir, metadata["backup"]["max_backups"])
+
     def _prune_backups(self, profile_dir: Path, max_backups: int) -> None:
         backup_dir = profile_dir / "backups"
 

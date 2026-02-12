@@ -1,9 +1,11 @@
 import importlib.util
 import sys
 from pathlib import Path
+sys.path.append(str(Path("src").resolve()))
 
 # Get full path to profile_manager.py
 file_path = Path("src/BrowserManager/profile_manager.py").resolve()
+
 
 spec = importlib.util.spec_from_file_location("profile_manager", file_path)
 module = importlib.util.module_from_spec(spec)
