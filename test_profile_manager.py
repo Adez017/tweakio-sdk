@@ -1,15 +1,20 @@
-import importlib.util
 import sys
 from pathlib import Path
+import importlib.util
+
+# Add src to sys.path
 sys.path.append(str(Path("src").resolve()))
 
-# Get full path to profile_manager.py
+# Load profile_manager directly without loading BrowserManager __init__
 file_path = Path("src/BrowserManager/profile_manager.py").resolve()
 
+spec = importlib.util.spec_from_file_location(
+    "BrowserManager.profile_manager",
+    file_path
+)
 
-spec = importlib.util.spec_from_file_location("profile_manager", file_path)
 module = importlib.util.module_from_spec(spec)
-sys.modules["profile_manager"] = module
+sys.modules["BrowserManager.profile_manager"] = module
 spec.loader.exec_module(module)
 
 ProfileManager = module.ProfileManager
@@ -45,4 +50,3 @@ print("Deleting test1...")
 pm.delete_profile("whatsapp", "test1")
 
 print("Profiles after deletion:", pm.list_profiles("whatsapp"))
-

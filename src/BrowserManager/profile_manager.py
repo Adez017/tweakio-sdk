@@ -7,6 +7,8 @@ from typing import List, Optional
 
 
 from directory import DirectoryManager
+from .profile_info import ProfileInfo
+
 
 
 
@@ -39,6 +41,8 @@ class ProfileManager:
                     "media_images": "media/images",
                     "media_videos": "media/videos",
                     "media_voice": "media/voice",
+                    "database_file": "messages.db",
+
                     "media_documents": "media/documents"
                 },
 
@@ -46,6 +50,8 @@ class ProfileManager:
                 "enabled": True,
                 "max_backups": 10
             },
+            "encryption": {},
+
             "status": {
                 "is_active": False,
                 "last_active_pid": None,
@@ -79,6 +85,20 @@ class ProfileManager:
 
         with open(profile_dir / "metadata.json", "w") as f:
             json.dump(metadata, f, indent=4)
+        return ProfileInfo.from_metadata(metadata, self.directory)
+
+        
+    def get_profile(self, platform: str, profile_id: str):
+        profile_dir = self.directory.get_profile_dir(platform, profile_id)
+        metadata_file = profile_dir / "metadata.json"
+
+        if not metadata_file.exists():
+            raise ValueError("Profile metadata not found.")
+
+        with open(metadata_file, "r") as f:
+            metadata = json.load(f)
+
+        return ProfileInfo.from_metadata(metadata, self.directory)
 
 
     def list_profiles(self, platform: Optional[str] = None) -> List[str]:
