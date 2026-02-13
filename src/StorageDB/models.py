@@ -2,7 +2,7 @@
 SQLAlchemy database models for message storage.
 Supports SQLite, PostgreSQL, and MySQL.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import String, Text, Float, DateTime, Integer, Index
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -40,7 +40,7 @@ class Message(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(timezone.utc),
         index=True
     )
     

@@ -106,12 +106,15 @@ class SQLAlchemyStorage(StorageInterface):
     async def init_db(self, **kwargs) -> None:
         """Initialize SQLAlchemy engine and session factory."""
         try:
-            # Create async engine
+            # Create async engine with connection pooling
             self._engine = create_async_engine(
                 self.database_url,
                 echo=self.echo,
-                pool_pre_ping=True,  # Verify connections before using
-                pool_recycle=3600    # Recycle connections after 1 hour
+                pool_pre_ping=True,      # Verify connections before using
+                pool_recycle=3600,       # Recycle connections after 1 hour
+                pool_size=5,             # Max number of connections in pool
+                max_overflow=10,         # Max overflow connections beyond pool_size
+                pool_timeout=30          # Seconds to wait for connection from pool
             )
             
             # Create session factory
